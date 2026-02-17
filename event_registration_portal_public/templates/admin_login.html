@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">🎓 Event Registration Portal</h1>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}">Register</a></li>
+                <li><a href="{{ url_for('registered_students_page') }}">Registered Students</a></li>
+                <li><a href="{{ url_for('admin_login') }}" class="active">Admin Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="admin-icon">🔐</div>
+                <h2>Admin Login</h2>
+                <p>Enter your credentials to access the admin dashboard</p>
+            </div>
+            
+            {% if error %}
+            <div class="error-message">
+                ❌ {{ error }}
+            </div>
+            {% endif %}
+            
+            <form action="{{ url_for('admin_login') }}" method="POST" class="login-form">
+                <div class="form-group">
+                    <label for="username">👤 Username</label>
+                    <input type="text" id="username" name="username" required placeholder="Enter username" autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">🔒 Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter password">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            
+            <div class="login-info">
+                <p class="info-text">💡 Default credentials:</p>
+                <p class="credentials">Username: <code>admin</code> | Password: <code>admin123</code></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Event Registration Portal. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Students</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">🎓 Event Registration Portal</h1>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}">Register</a></li>
+                <li><a href="{{ url_for('registered_students_page') }}" class="active">Registered Students</a></li>
+                <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <div class="page-header">
+            <h2>👥 Registered Students</h2>
+            <p class="total-count">Total Registrations: <span class="badge">{{ students|length }}</span></p>
+        </div>
+
+        {% if students %}
+        <div class="students-grid">
+            {% for student in students %}
+            <div class="student-card">
+                <div class="student-card-header">
+                    <div class="student-avatar">{{ student.name[0].upper() }}</div>
+                    <div class="student-info">
+                        <h3>{{ student.name }}</h3>
+                        <p class="register-num">{{ student.register_number }}</p>
+                    </div>
+                </div>
+                
+                <div class="student-card-body">
+                    <div class="info-item">
+                        <span class="icon">🏛️</span>
+                        <span>{{ student.department }} - {{ student.year }} Year</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="icon">🏫</span>
+                        <span>{{ student.college }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="icon">📱</span>
+                        <span>{{ student.phone }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="icon">📆</span>
+                        <span>{{ student.date }}</span>
+                    </div>
+                    
+                    <div class="events-registered">
+                        <strong>🎯 Events:</strong>
+                        <ul class="event-list">
+                            {% for event in student.events %}
+                            <li>{{ event }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>No Registrations Yet</h3>
+            <p>Be the first to register for our exciting events!</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Register Now</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- QR Code Section -->
+    <div class="container qr-section">
+        <div class="qr-card">
+            <h3>📱 Scan to Access on Mobile</h3>
+            <p class="qr-description">Scan this QR code with your mobile device to open the registration portal</p>
+            <div class="qr-status" id="qr-status"></div>
+            <div id="qrcode" class="qr-container"></div>
+            <div class="qr-url" id="qr-url-display">Loading...</div>
+            <p class="qr-instructions" id="qr-instructions">
+                📲 <strong>How to scan:</strong><br>
+                Open your mobile camera or QR code scanner app and point it at the QR code above
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Event Registration Portal. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Generate QR Code
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/get-server-url')
+                .then(response => response.json())
+                .then(data => {
+                    const serverUrl = data.url;
+                    const connectionType = data.type;
+                    
+                    document.getElementById('qr-url-display').textContent = serverUrl;
+                    
+                    const statusDiv = document.getElementById('qr-status');
+                    if (connectionType === 'public') {
+                        statusDiv.innerHTML = '<span class="status-public">✅ PUBLIC ACCESS - Works on Mobile Data!</span>';
+                        statusDiv.className = 'qr-status status-public-box';
+                        document.getElementById('qr-instructions').innerHTML = 
+                            '📲 <strong>Works on ANY network!</strong><br>Mobile data, WiFi, or any network - all work!';
+                    } else {
+                        statusDiv.innerHTML = '<span class="status-local">🏠 LOCAL ACCESS - Same WiFi Only</span>';
+                        statusDiv.className = 'qr-status status-local-box';
+                    }
+                    
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: serverUrl,
+                        width: 200,
+                        height: 200,
+                        colorDark: "#1e3a8a",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                })
+                .catch(error => {
+                    console.error('Error generating QR code:', error);
+                    document.getElementById('qr-url-display').textContent = 'Error loading QR code';
+                });
+        });
+    </script>
+</body>
+</html>

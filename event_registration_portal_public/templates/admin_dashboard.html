@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-admin">
+        <div class="container">
+            <h1 class="logo">🎓 Admin Dashboard</h1>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('admin_dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url_for('admin_logout') }}" class="logout-btn">🚪 Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <div class="dashboard-header">
+            <h2>📊 Registration Dashboard</h2>
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ students|length }}</div>
+                        <div class="stat-label">Total Registrations</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-value">
+                            {% set total_events = namespace(count=0) %}
+                            {% for student in students %}
+                                {% set total_events.count = total_events.count + student.events|length %}
+                            {% endfor %}
+                            {{ total_events.count }}
+                        </div>
+                        <div class="stat-label">Total Event Registrations</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🏛️</div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ students|map(attribute='department')|unique|list|length if students else 0 }}</div>
+                        <div class="stat-label">Departments</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if students %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Registration ID</th>
+                        <th>Name</th>
+                        <th>Register No.</th>
+                        <th>Department</th>
+                        <th>Year</th>
+                        <th>College</th>
+                        <th>Phone</th>
+                        <th>Events</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td><strong>{{ student.registration_id }}</strong></td>
+                        <td><strong>{{ student.name }}</strong></td>
+                        <td>{{ student.register_number }}</td>
+                        <td>{{ student.department }}</td>
+                        <td>{{ student.year }}</td>
+                        <td>{{ student.college }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>
+                            <div class="events-pills">
+                                {% for event in student.events %}
+                                <span class="pill">{{ event }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>{{ student.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>No Registrations Yet</h3>
+            <p>Waiting for students to register...</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Event Registration Portal. All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
