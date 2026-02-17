@@ -1,0 +1,11 @@
+Flask==3.0.0
+Werkzeug==3.0.1
+pyngrok==7.0.0
+
+# QR Code generation is handled via JavaScript CDN (qrcodejs)
+# No additional Python packages needed for QR functionality
+
+# pyngrok enables public URL access (mobile data users can access)
+# If you only need local WiFi access, pyngrok is optional
+
+# Certificate generation removed - reportlab no longer needed
