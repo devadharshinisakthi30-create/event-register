@@ -195,6 +195,7 @@ def get_server_url():
         })
 
 if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=5000)
     local_ip = get_local_ip()
     
     print("\n" + "="*70)
